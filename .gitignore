@@ -1,0 +1,8 @@
+bin/
+*.db
+.env
+ssh_keys/
+coverage.out
+.cache/
+.ash_history
+.config/

@@ -1,0 +1,6 @@
+.git
+*.db
+.env
+.cache/
+.ash_history
+.config/
