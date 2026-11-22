@@ -48,6 +48,6 @@ internal/
 
 ## Équipe
 
-- Membre A : comptes, serveur, SSH, Docker et déploiement
-- Membre B : catalogue, panier, gestion des produits et des utilisateurs
-- Membre C : paiement, commandes, gestion des commandes, base des interfaces
+- WilliammCorreia : comptes, serveur, gestion des utilsateurs, SSH, Docker et déploiement
+- VincentG-C : catalogue, panier, gestion des produits
+- yasyasbdr : paiement, commandes, gestion des commandes, base des interfaces
