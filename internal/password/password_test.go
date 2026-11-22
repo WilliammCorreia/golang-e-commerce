@@ -34,6 +34,18 @@ func TestCheck(t *testing.T) {
 			stored:   hashedPwd,
 			expected: false,
 		},
+		{
+			name:     "Pas de dollar sur stored",
+			password: "secret123",
+			stored:   "pasdedollar",
+			expected: false,
+		},
+		{
+			name:     "Mot de passe pas en hexadécimal",
+			password: "secret123",
+			stored:   "zz$zz",
+			expected: false,
+		},
 	}
 
 	for _, tt := range tests {
