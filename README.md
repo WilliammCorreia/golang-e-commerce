@@ -42,6 +42,7 @@ internal/
   ids/        identifiants métier (PDT-, BSK-, CMD-) et codes aléatoires
   mailer/     envoi des codes (écrits dans les logs en développement)
   model/      types métier partagés
+  password/   hashage, et comparaison des mots de passes
   store/      accès à la base SQLite
   tui/        interfaces Charm
 ```
