@@ -75,7 +75,14 @@ internal/tui        interfaces Charm et styles communs
 ## Ce qui existe déjà (à réutiliser)
 
 - **`internal/api/json.go`** : `writeJSON(w, status, v)` et `writeError(w, status, msg)`. `writeError` renvoie `{"error": "msg"}`. Toutes les réponses de l'API passent par ces deux fonctions.
-- **`internal/api/router.go`** : `NewRouter() http.Handler`, avec la route `GET /health`.
+- **`internal/api/router.go`** : la struct `API`, qui porte les dépendances des handlers (pour l'instant `store *store.Store`), et `NewRouter(s *store.Store) http.Handler`.
+  - Chaque handler est une méthode de `*API` : `func (a *API) handleXxx(w http.ResponseWriter, r *http.Request)`.
+  - On l'enregistre dans `NewRouter` avec `mux.HandleFunc("GET /...", a.handleXxx)`.
+  - Après une réponse d'erreur (`writeError`), toujours `return`.
+- **`internal/store/store.go`** : `Open(path) (*Store, error)`, `Close()` et `Ping()`.
+  - Le `*sql.DB` est un champ privé de `Store` : seul le package `store` écrit du SQL.
+  - Chaque domaine ajoute ses requêtes comme méthodes de `*Store`, dans `internal/store/<domaine>.go` (par exemple `func (s *Store) CreateProduct(...)`, qui utilise `s.db`).
+- **`internal/store/schema.go`** : la constante `schema`, exécutée par `Open` au démarrage. Chaque membre y ajoute ses tables avec `CREATE TABLE IF NOT EXISTS`. Tables existantes : `users`, `sessions`.
 - **`internal/password`** : `Hash(password) (string, error)` et `Check(password, stored) bool`, basées sur PBKDF2. Ne hache jamais un mot de passe autrement.
 - **`cmd/server/main.go`** : `getenv(key, fallback)` et un `http.Server` avec des délais d'expiration.
 
@@ -135,6 +142,7 @@ internal/tui        interfaces Charm et styles communs
 - **Lectures** : toujours `defer rows.Close()`, puis vérifier `rows.Err()` après la boucle.
 - **Plusieurs écritures liées**, comme créer une commande et vider le panier : une transaction, avec `db.Begin`, `defer tx.Rollback()` et `tx.Commit()`.
 - **Ligne introuvable** : `store` renvoie une erreur que le handler teste avec `errors.Is`, pour répondre 404.
+- **Modifier une table existante** : `IF NOT EXISTS` ne modifie pas une table qui existe déjà. En développement, après avoir changé une table, supprime `ecommerce.db` : elle sera recréée au prochain démarrage.
 
 ## Charm v2 : attention aux exemples en ligne
 
