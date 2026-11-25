@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"e-commerce/internal/api"
+	"e-commerce/internal/mailer"
 	"e-commerce/internal/store"
 )
 
@@ -18,7 +19,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:         getenv("LISTEN_ADDR", ":8080"),
-		Handler:      api.NewRouter(st),
+		Handler:      api.NewRouter(st, mailer.LogMailer{}),
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  30 * time.Second,

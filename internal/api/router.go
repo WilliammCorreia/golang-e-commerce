@@ -7,13 +7,19 @@ import (
 )
 
 type API struct {
-	store *store.Store
+	store  *store.Store
+	mailer Mailer
 }
 
-func NewRouter(s *store.Store) http.Handler {
-	a := &API{store: s}
+type Mailer interface {
+	Send(to, subject, body string) error
+}
+
+func NewRouter(s *store.Store, m Mailer) http.Handler {
+	a := &API{store: s, mailer: m}
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", a.handleHealth)
+	mux.HandleFunc("POST /auth/register", a.handleRegister)
 	return mux
 }
 
