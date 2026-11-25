@@ -20,6 +20,7 @@ func NewRouter(s *store.Store, m Mailer) http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", a.handleHealth)
 	mux.HandleFunc("POST /auth/register", a.handleRegister)
+	mux.HandleFunc("POST /auth/confirm", a.handleConfirm)
 	return mux
 }
 
