@@ -51,3 +51,15 @@ func (s *Store) ConfirmUser(email, confirmCode string) error {
 
 	return nil
 }
+
+// ReadUserByEmail récupère un utilisateur dans la base de données avec l'email
+func (s *Store) ReadUserByEmail(email, password string) string, error {
+	res, err := s.db.Exec(
+		`SELECT * FROM users WHERE email = ?`, email
+	)
+	if err != nil {
+		return fmt.Errorf("récupération de l'utilisateur : %w", err)
+	}
+
+	return res
+}

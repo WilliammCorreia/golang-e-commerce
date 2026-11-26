@@ -12,7 +12,7 @@ import (
 	"e-commerce/internal/store"
 )
 
-type registerRequest struct {
+type authRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
@@ -23,7 +23,7 @@ type confirmRequest struct {
 }
 
 func (a *API) handleRegister(w http.ResponseWriter, r *http.Request) {
-	req := registerRequest{}
+	req := authRequest{}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		writeError(w, http.StatusBadRequest, "erreur lors de la récupération de l'email et du password")
 		return
@@ -104,4 +104,30 @@ func (a *API) handleConfirm(w http.ResponseWriter, r *http.Request) {
 		"data":    map[string]string{"email": email},
 	}
 	writeJSON(w, http.StatusOK, body)
+}
+
+func (a *API) handleLogin(w http.ResponseWriter, r *http.Request) {
+	req := authRequest{}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeError(w, http.StatusBadRequest, "erreur lors de la récupération de l'email et du password")
+		return
+	}
+
+	email := strings.ToLower(strings.TrimSpace(req.Email))
+	if !strings.Contains(email, "@") {
+		writeError(w, http.StatusBadRequest, "format de l'email invalide")
+		return
+	}
+
+	if user, err := a.store.ReadUserByEmail(email, req.Password); err != nil {
+		writeError(w, http.StatusBadRequest, "information de connexion invalide")
+		return
+	}
+
+	isPwdCorrect := password.Check(password, user.password_hash)
+	if !isPwdCorrect {
+		writeError(w, http.StatusUnauthorized, "information de connexion invalide")
+	}
+
+	// Créer la session
 }
